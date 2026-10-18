@@ -8,7 +8,6 @@ from openai import OpenAI
 app = FastAPI(title="Local LLM Invoice Extraction Service")
 
 # Initialize client (point to your local LLM server e.g. Ollama/vLLM or OpenAI-compatible API)
-# For local Ollama: base_url="http://localhost:11434/v1", api_key="ollama"
 client = instructor.from_openai(
     OpenAI(
         base_url=os.getenv("LLM_BASE_URL", "https://api.openai.com/v1"),
@@ -28,7 +27,7 @@ class InvoiceResponse(BaseModel):
 
     @field_validator("currency")
     @classmethod
-    iculate_currency(cls, v: str) -> str:
+    def validate_currency(cls, v: str) -> str:
         return v.upper().strip()
 
 @app.post("/extract", response_model=InvoiceResponse, status_code=status.HTTP_200_OK)
@@ -51,13 +50,13 @@ def extract_invoice(payload: InvoiceRequest):
                     "content": (
                         "You are an expert invoice data extractor. Extract the vendor name, "
                         "total amount due, 3-letter uppercase currency code, and payment due date "
-                        "in YYYY-MM-DD format from the provided invoice text."
+                        "in YYYY-MM-DD format from the provided invoice text. "
+                        "Omit reasoning, return valid JSON only."
                     ),
                 },
                 {"role": "user", "content": payload.text},
             ],
             max_retries=2,
-        Omit reasoning, return valid JSON only."
         )
         return response
     except Exception as e:
