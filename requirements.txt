@@ -1,5 +1,5 @@
-fastapi==0.110.0
-uvicorn==0.28.0
-pydantic==2.6.4
-instructor==1.2.0
-openai==1.14.1
+fastapi
+uvicorn
+pydantic>=2.0.0
+instructor
+openai>=1.0.0
